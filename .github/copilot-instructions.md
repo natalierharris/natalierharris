@@ -38,7 +38,7 @@ This is a GitHub profile repository. The README.md file is displayed on the GitH
 
 ## Conventions
 - File names: Use lowercase with hyphens for separation (kebab-case)
-- Indentation: 4 spaces for HTML files
+- Indentation: 4 spaces for HTML files, 2 spaces for Markdown lists
 - Line endings: LF (Unix-style)
 
 ## Common Tasks
