@@ -1,0 +1,99 @@
+/* =============================================
+   Modern stylesheet for index.html
+   ============================================= */
+
+/* --- Reset & base -------------------------------------------- */
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+/* --- Custom properties (design tokens) ----------------------- */
+:root {
+    --color-bg:        #0f1117;
+    --color-surface:   #1a1d2e;
+    --color-border:    #2e3250;
+    --color-accent:    #7c6af7;
+    --color-accent-hover: #9d8fff;
+    --color-text:      #e2e4f0;
+    --color-muted:     #9094b0;
+
+    --font-sans: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    --radius:    0.75rem;
+    --shadow:    0 8px 32px rgba(0, 0, 0, 0.45);
+    --transition: 0.2s ease;
+}
+
+/* --- Body & layout ------------------------------------------- */
+body {
+    background-color: var(--color-bg);
+    color: var(--color-text);
+    font-family: var(--font-sans);
+    font-size: 1.0625rem;
+    line-height: 1.7;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 1rem;
+}
+
+/* --- Card container ------------------------------------------ */
+.card {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    max-width: 640px;
+    width: 100%;
+    padding: 3rem 2.5rem;
+}
+
+/* --- Typography ---------------------------------------------- */
+h1 {
+    font-size: clamp(2rem, 5vw, 3rem);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    background: linear-gradient(135deg, var(--color-accent) 0%, #b06af7 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 1.25rem;
+}
+
+p {
+    color: var(--color-muted);
+    margin-bottom: 1.75rem;
+}
+
+/* --- Link ---------------------------------------------------- */
+a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    color: var(--color-accent);
+    text-decoration: none;
+    font-weight: 500;
+    border-bottom: 2px solid transparent;
+    padding-bottom: 1px;
+    transition: color var(--transition), border-color var(--transition);
+}
+
+a::after {
+    content: '↗';
+    font-size: 0.85em;
+    opacity: 0.75;
+}
+
+a:hover {
+    color: var(--color-accent-hover);
+    border-bottom-color: var(--color-accent-hover);
+}
+
+/* --- Responsive tweaks --------------------------------------- */
+@media (max-width: 480px) {
+    .card {
+        padding: 2rem 1.25rem;
+    }
+}
