@@ -1,0 +1,166 @@
+name: Slash Commands
+
+# Trigger on comments made to issues and pull requests
+on:
+  issue_comment:
+    types: [created]
+
+jobs:
+  slash-commands:
+    name: Handle slash command
+    runs-on: ubuntu-latest
+    # Only run when the comment starts with a slash command
+    if: startsWith(github.event.comment.body, '/')
+    permissions:
+      issues: write
+      pull-requests: write
+    steps:
+      - name: Handle slash command
+        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7
+        with:
+          script: |
+            const comment = context.payload.comment;
+            const body = comment.body.trim();
+            const issueNumber = context.payload.issue.number;
+            const commenter = comment.user.login;
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+
+            // Helper: react to the triggering comment
+            async function react(reaction) {
+              await github.rest.reactions.createForIssueComment({
+                owner,
+                repo,
+                comment_id: comment.id,
+                content: reaction,
+              });
+            }
+
+            // Helper: post a comment on the issue/PR
+            async function postComment(body) {
+              await github.rest.issues.createComment({
+                owner,
+                repo,
+                issue_number: issueNumber,
+                body,
+              });
+            }
+
+            // Acknowledge receipt with 👀
+            await react('eyes');
+
+            // Parse the command (first word) and optional argument
+            const [rawCommand, ...argParts] = body.split(/\s+/);
+            const command = rawCommand.toLowerCase();
+            const arg = argParts.join(' ').trim();
+
+            try {
+              // /hello — respond with a friendly greeting
+              if (command === '/hello') {
+                await postComment(`👋 Hello, @${commenter}! Thanks for stopping by!`);
+
+              // /assign — assign the issue/PR to the commenter
+              } else if (command === '/assign') {
+                await github.rest.issues.addAssignees({
+                  owner,
+                  repo,
+                  issue_number: issueNumber,
+                  assignees: [commenter],
+                });
+                await postComment(`✅ Assigned @${commenter} to this issue/PR.`);
+
+              // /unassign — remove the commenter from assignees
+              } else if (command === '/unassign') {
+                await github.rest.issues.removeAssignees({
+                  owner,
+                  repo,
+                  issue_number: issueNumber,
+                  assignees: [commenter],
+                });
+                await postComment(`✅ Removed @${commenter} from assignees.`);
+
+              // /label <name> — add a label to the issue/PR
+              } else if (command === '/label') {
+                if (!arg) {
+                  await postComment(`❌ Usage: \`/label <name>\``);
+                  await react('-1');
+                  return;
+                }
+                await github.rest.issues.addLabels({
+                  owner,
+                  repo,
+                  issue_number: issueNumber,
+                  labels: [arg],
+                });
+                await postComment(`✅ Added label \`${arg}\`.`);
+
+              // /unlabel <name> — remove a label from the issue/PR
+              } else if (command === '/unlabel') {
+                if (!arg) {
+                  await postComment(`❌ Usage: \`/unlabel <name>\``);
+                  await react('-1');
+                  return;
+                }
+                await github.rest.issues.removeLabel({
+                  owner,
+                  repo,
+                  issue_number: issueNumber,
+                  name: arg,
+                });
+                await postComment(`✅ Removed label \`${arg}\`.`);
+
+              // /close — close the issue/PR
+              } else if (command === '/close') {
+                await github.rest.issues.update({
+                  owner,
+                  repo,
+                  issue_number: issueNumber,
+                  state: 'closed',
+                });
+                await postComment(`✅ Closed by @${commenter}.`);
+
+              // /reopen — reopen the issue/PR
+              } else if (command === '/reopen') {
+                await github.rest.issues.update({
+                  owner,
+                  repo,
+                  issue_number: issueNumber,
+                  state: 'open',
+                });
+                await postComment(`✅ Reopened by @${commenter}.`);
+
+              // /help — list all available slash commands
+              } else if (command === '/help') {
+                await postComment([
+                  '## 🤖 Available Slash Commands',
+                  '',
+                  '| Command | Description |',
+                  '|---|---|',
+                  '| `/hello` | Responds with a friendly greeting |',
+                  '| `/assign` | Assigns this issue/PR to you |',
+                  '| `/unassign` | Removes you from the assignees |',
+                  '| `/label <name>` | Adds the specified label (e.g. `/label bug`) |',
+                  '| `/unlabel <name>` | Removes the specified label |',
+                  '| `/close` | Closes this issue/PR |',
+                  '| `/reopen` | Reopens this issue/PR |',
+                  '| `/help` | Shows this help message |',
+                  '',
+                  '_Type any command in a new comment to use it._',
+                ].join('\n'));
+
+              // Unknown command — silently ignore (or react with ❌)
+              } else {
+                await react('-1');
+                await postComment(`❌ Unknown command: \`${command}\`. Type \`/help\` to see available commands.`);
+                return;
+              }
+
+              // React with ✅ on success
+              await react('+1');
+
+            } catch (err) {
+              // React with ❌ on failure and surface the error
+              await react('-1');
+              await postComment(`❌ Command failed: ${err.message}`);
+              core.setFailed(err.message);
+            }
