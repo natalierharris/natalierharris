@@ -1,16 +1,21 @@
-## Hi there 👋
+## Hi there, I'm Natalie 👋
 
-<!--
-**natalierharris/natalierharris** is a ✨ _special_ ✨ repository because its `README.md` (this file) appears on your GitHub profile.
+Welcome to my GitHub profile! I'm passionate about technology and always looking to learn and grow.
 
-Here are some ideas to get you started:
+### 🔭 What I'm working on
+- Building and exploring projects on GitHub
+- Experimenting with web development using HTML and Markdown
 
-- 🔭 I’m currently working on ...
-- 🌱 I’m currently learning ...
-- 👯 I’m looking to collaborate on ...
-- 🤔 I’m looking for help with ...
-- 💬 Ask me about ...
-- 📫 How to reach me: ...
-- 😄 Pronouns: ...
-- ⚡ Fun fact: ...
--->
+### 🌱 What I'm currently learning
+- GitHub features including Actions, Copilot, and code review workflows
+- Best practices for writing clean, maintainable code
+
+### 💬 Ask me about
+- GitHub and how to make the most of its features
+- Getting started with web development
+
+### 📫 How to reach me
+- GitHub: [@natalierharris](https://github.com/natalierharris)
+
+### ⚡ Fun fact
+- This profile repository is a special GitHub feature — the `README.md` you're reading right now is displayed directly on my profile page!
